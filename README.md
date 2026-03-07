@@ -48,10 +48,10 @@ hablog export --format csv        # Export all sessions as CSV
 
 ## Checklist
 
-- [ ] start
-- [ ] end
-- [ ] restart
-   - [ ] --note, --tags
+- [x] start
+- [x] end
+- [x] restart
+   - [x] --note, --tags
 - [ ] status
 
 - [ ] break start
