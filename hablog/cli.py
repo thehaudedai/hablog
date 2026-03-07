@@ -1,8 +1,9 @@
 # Import InBuilt Modules
 # -------------------------------------------------------------------------------------------
-import argparse
+import typer
 import json
 import os
+from datetime import datetime
 
 # -------------------------------------------------------------------------------------------
 
@@ -32,98 +33,89 @@ FILE = "logs.json"
 
 # -------------------------------------------------------------------------------------------
 
+# ------------------------------------------------------------------------------------
+# Loading to Dictionary:
+if not os.path.exists(FILE):
+    with open(FILE, "w") as file:
+        json.dump({"active_id": None, "sessions": []}, file, indent=4)
+with open(FILE, "r") as file:
+    logs_dict = json.load(file)
+# ------------------------------------------------------------------------------------
 
-# Argument Parsing
-# -------------------------------------------------------------------------------------------
-def run_app():
-    note_var = ""
-    tags_var = ""
 
-    # Loading to Dictionary:
-    if not os.path.exists(FILE):
-        with open(FILE, "w") as file:
-            json.dump({"active_id": None, "sessions": []}, file, indent=4)
-    with open(FILE, "r") as file:
-        logs_dict = json.load(file)
+app = typer.Typer()
 
-    # Initializing The Parser
-    parser = argparse.ArgumentParser(
-        description="Hablog, Easily Log Your Habit and Tasks"
-    )
-    subparser = parser.add_subparsers(
-        dest="command", required=True, help="sub-command to run"
-    )
 
-    # Start Parser
-    start_parser = subparser.add_parser("start", help="Start tracking")
-    start_parser.add_argument("project", type=str, help="Name of your project or task")
-    start_parser.add_argument(
-        "--note", type=str, help="Additional Note when starting your project/task"
-    )
-    start_parser.add_argument(
-        "--tags", type=str, help="Tags to organize your project separated by comma ',' "
-    )
+@app.command("start")
+def start_arg(
+    project: str, note: str = "", tags: str = "", start_time: str | None = None
+):
+    if start_time is None:
+        start_time = datetime.now().isoformat()
+    start.run(logs_dict, project, note, tags, start_time)
+    save_logs()
 
-    # End Parser
-    end_parser = subparser.add_parser("end", help="End tracking")
-    end_parser.add_argument(
-        "--note", type=str, help="Additional Note when ending your project/task"
-    )
 
-    # Status Parser
-    status_parser = subparser.add_parser("status", help="Start tracking your task")
+@app.command("end")
+def end_arg(note: str = "", end_time: str | None = None):
+    end.run(logs_dict, note, end_time)
+    save_logs()
 
-    # Restart Parser
-    restart_parser = subparser.add_parser("restart", help="Restart tracking your task")
-    restart_parser.add_argument(
-        "project", type=str, help="Name of your project or task"
-    )
-    restart_parser.add_argument(
-        "--end_note",
-        type=str,
-        help="Additional Note when ending your current project/task",
-    )
-    restart_parser.add_argument(
-        "--start_note",
-        type=str,
-        help="Additional note when starting a new project/task",
-    )
-    restart_parser.add_argument(
-        "--tags", type=str, help="Tags to organize your project separated by comma ',' "
-    )
 
-    args = parser.parse_args()
+@app.command("restart")
+def restart_arg(
+    project: str,
+    end_note: str = "",
+    start_note: str = "",
+    tags: str = "",
+    end_time: str | None = None,
+    start_time: str | None = None,
+):
+    now = datetime.now().isoformat()
+    if start_time is None:
+        start_time = now
+    if end_time is None:
+        end_time = now
+    end.run(logs_dict, end_note, end_time)
+    start.run(logs_dict, project, start_note, tags, start_time)
+    save_logs()
 
-    # Argument Condition Checking
-    match args.command:
 
-        case "start":
-            if args.note:
-                note_var = args.note
-            if args.tags:
-                tags_var = args.tags
-            start.run(logs_dict, args.project, note_var, tags_var)
+@app.command("edit")
+def edit_arg():
+    save_logs()
 
-        case "end":
-            if args.note:
-                note_var = args.note
-            end.run(logs_dict, note_var)
 
-        case "restart":
-            if args.end_note:
-                note_var = args.end_note
-            end.run(logs_dict, note_var)
-            if args.tags:
-                tags_var = args.tags
-            if args.start_note:
-                start.run(logs_dict, args.project, args.start_note, tags_var)
-            else:
-                start.run(logs_dict, args.project, "", tags_var)
+@app.command("status")
+def status_arg():
+    pass
 
-        # case "status":
-        #     pass
-        # case "start":
-        #     pass
 
+@app.command("break")
+def break_arg():
+    save_logs()
+
+
+@app.command("stats")
+def stats_arg():
+    pass
+
+
+@app.command("export")
+def export_arg():
+    pass
+
+
+@app.command("view")
+def view_arg():
+    pass
+
+
+# ------------------------------------------------------------------------------------
+# Writing Dictionary to JSON
+def save_logs():
     with open(FILE, "w") as file:
         json.dump(logs_dict, file, indent=4)
+
+
+# ------------------------------------------------------------------------------------

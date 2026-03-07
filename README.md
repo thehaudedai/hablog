@@ -44,6 +44,14 @@ hablog export --format json       # Export all sessions as JSON
 hablog export --format csv        # Export all sessions as CSV
 ```
 
+### Editing / Fixing Mistakes
+
+```bash
+hablog edit <session-id> --p <project-name> --st <start-time> --et <end-time> --note <note> --tags <tags>
+
+# Edit any field of the Session except for Session ID to prevent breakage
+```
+
 ---
 
 ## Checklist
@@ -63,5 +71,8 @@ hablog export --format csv        # Export all sessions as CSV
 
 - [ ] export
    - [ ] --format
+
+- [ ] edit
+   - [ ] --p, --st, --et, --note, --tags
 
 ---

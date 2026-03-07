@@ -1,4 +1,4 @@
-from hablog.cli import run_app
+from hablog.cli import app
 
 if __name__ == "__main__":
-    run_app()
+    app()
