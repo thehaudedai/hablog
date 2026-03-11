@@ -13,8 +13,46 @@ Sessions can be short (even 5 minutes). The goal is **momentum, not perfection**
 ---
 
 # Installation
+Hablog is a Python CLI tool. You can install it using `pipx` (recommended) or `pip` directly.
 
-_(Installation instructions will be added once packaging is ready.)_
+
+## Install with pipx (recommended)
+If you have `pipx` installed:
+```bash
+pipx install git+https://github.com/thehaudedai/hablog.git@v0.1.0
+```
+This will:
+- Install Hablog in an isolated environment
+- Make the `hablog` command available globally
+- Keep your system Python clean
+
+Run it from any directory:
+```bash
+hablog start coding
+hablog end
+hablog restart game-dev
+```
+
+---
+
+## Install with pip (alternative)
+If you prefer pip:
+```bash
+pip install git+https://github.com/thehaudedai/hablog.git@v0.1.0
+```
+After installation, run the CLI as usual:
+```bash
+hablog start coding
+hablog end
+hablog restart game-dev
+```
+
+---
+
+### Notes:
+- Works on Linux, macOS, and Windows
+- Logs are stored in `~/.config/hablog/logs.json` (Linux/macOS) or the equivalent config folder on Windows
+- This is the initial release (v0.1.0) with basic session management
 
 ---
 
