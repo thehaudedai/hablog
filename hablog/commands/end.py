@@ -40,6 +40,6 @@ def run(dict, note, end_time):
     dict["active_id"] = None
 
     return Result.ok(
-        f"Successfully Ended {current_session["project"]} Session with Session Id: {current_session_id + 1}",
+        f"Successfully Ended {current_session['project']} Session with Session Id: {current_session_id + 1}",
         changed=True,
     )

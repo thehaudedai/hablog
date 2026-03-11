@@ -6,14 +6,14 @@ import os
 
 # JSON File Directory
 # -------------------------------------------------------------------------------------------
-# HOME = os.path.expanduser("~")
-# HABLOG_DIR = os.path.join(HOME, ".hablog")
-# os.makedirs(HABLOG_DIR, exist_ok=True)
+HOME = os.path.expanduser("~")
+HABLOG_DIR = os.path.join(HOME, ".config", "hablog")
+os.makedirs(HABLOG_DIR, exist_ok=True)
 
-# FILE = os.path.join(HABLOG_DIR, "logs.json")
+FILE = os.path.join(HABLOG_DIR, "logs.json")
 
 # For Testing:
-FILE = "logs.json"
+# FILE = "logs.json"
 # -------------------------------------------------------------------------------------------
 
 
