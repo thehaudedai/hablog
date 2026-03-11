@@ -10,21 +10,9 @@ from datetime import datetime
 
 # Import Custom Packages
 # -------------------------------------------------------------------------------------------
-from hablog.commands import start, end
+from hablog.commands import start, end, restart
+from hablog.storage import load_logs, save_logs
 
-# -------------------------------------------------------------------------------------------
-
-
-# JSON File Directory
-# -------------------------------------------------------------------------------------------
-# HOME = os.path.expanduser("~")
-# HABLOG_DIR = os.path.join(HOME, ".hablog")
-# os.makedirs(HABLOG_DIR, exist_ok=True)
-
-# FILE = os.path.join(HABLOG_DIR, "logs.json")
-
-# For Testing:
-FILE = "logs.json"
 # -------------------------------------------------------------------------------------------
 
 
@@ -33,35 +21,43 @@ FILE = "logs.json"
 
 # -------------------------------------------------------------------------------------------
 
-# ------------------------------------------------------------------------------------
-# Loading to Dictionary:
-if not os.path.exists(FILE):
-    with open(FILE, "w") as file:
-        json.dump({"active_id": None, "sessions": []}, file, indent=4)
-with open(FILE, "r") as file:
-    logs_dict = json.load(file)
-# ------------------------------------------------------------------------------------
-
-
+# Initializing Typer and Storage
+# -------------------------------------------------------------------------------------------
 app = typer.Typer()
 
+logs_dict = load_logs()
+# -------------------------------------------------------------------------------------------
 
+
+# Start Command
+# TODO: Add First Sub-Task to Complete
+# TODO: Add Project Creation before starting session (Only PreDefined Projects can be started session for)
+# -------------------------------------------------------------------------------------------
 @app.command("start")
 def start_arg(
     project: str, note: str = "", tags: str = "", start_time: str | None = None
 ):
-    if start_time is None:
-        start_time = datetime.now().isoformat()
-    start.run(logs_dict, project, note, tags, start_time)
-    save_logs()
+    output = start.run(logs_dict, project, note, tags, start_time)
+    output.display(lambda: save_logs(logs_dict))
 
 
+# -------------------------------------------------------------------------------------------
+
+
+# End Command
+# TODO: Add Sub-Task to Complete Next or Current at
+# -------------------------------------------------------------------------------------------
 @app.command("end")
 def end_arg(note: str = "", end_time: str | None = None):
-    end.run(logs_dict, note, end_time)
-    save_logs()
+    output = end.run(logs_dict, note, end_time)
+    output.display(lambda: save_logs(logs_dict))
 
 
+# -------------------------------------------------------------------------------------------
+
+
+# Restart Command
+# -------------------------------------------------------------------------------------------
 @app.command("restart")
 def restart_arg(
     project: str,
@@ -71,51 +67,80 @@ def restart_arg(
     end_time: str | None = None,
     start_time: str | None = None,
 ):
-    now = datetime.now().isoformat()
-    if start_time is None:
-        start_time = now
-    if end_time is None:
-        end_time = now
-    end.run(logs_dict, end_note, end_time)
-    start.run(logs_dict, project, start_note, tags, start_time)
-    save_logs()
+    output = restart.run(
+        logs_dict, project, end_note, start_note, tags, end_time, start_time
+    )
+    output.display(save_func=lambda: save_logs(logs_dict))
 
 
+# -------------------------------------------------------------------------------------------
+
+
+# Edit Command
+# -------------------------------------------------------------------------------------------
 @app.command("edit")
 def edit_arg():
     save_logs()
 
 
+# -------------------------------------------------------------------------------------------
+
+
+# Status Command
+# -------------------------------------------------------------------------------------------
 @app.command("status")
 def status_arg():
     pass
 
 
+# -------------------------------------------------------------------------------------------
+
+
+# Break Command
+# -------------------------------------------------------------------------------------------
 @app.command("break")
 def break_arg():
     save_logs()
 
 
+# -------------------------------------------------------------------------------------------
+
+
+# Stats Command
+# -------------------------------------------------------------------------------------------
 @app.command("stats")
 def stats_arg():
     pass
 
 
+# -------------------------------------------------------------------------------------------
+
+
+# Export Command
+# -------------------------------------------------------------------------------------------
 @app.command("export")
 def export_arg():
     pass
 
 
+# -------------------------------------------------------------------------------------------
+
+
+# View Command
+# -------------------------------------------------------------------------------------------
 @app.command("view")
 def view_arg():
     pass
 
 
-# ------------------------------------------------------------------------------------
-# Writing Dictionary to JSON
-def save_logs():
-    with open(FILE, "w") as file:
-        json.dump(logs_dict, file, indent=4)
+# -------------------------------------------------------------------------------------------
 
 
-# ------------------------------------------------------------------------------------
+# Create Command
+# -------------------------------------------------------------------------------------------
+@app.command("create")
+def create_arg():
+    pass
+
+
+# -------------------------------------------------------------------------------------------
